@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-04T08:46:48.966Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="iTnzWACogVHdztwNVVBu" version="24.2.2" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-04T08:48:56.292Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="L4CEdwSbtGPGxOtuMAth" version="24.2.2" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="880" dy="460" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -175,8 +175,8 @@
             <mxPoint x="430" y="730" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="DPZoa7H93xpOjkNScfjQ-59" value="Issues goods with delivery" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Tahoma;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="420" y="668" width="160" height="30" as="geometry" />
+        <mxCell id="DPZoa7H93xpOjkNScfjQ-59" value="Issues goods with delivery note" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontFamily=Tahoma;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="420" y="668" width="190" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
