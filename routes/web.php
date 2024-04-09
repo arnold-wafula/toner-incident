@@ -1,11 +1,26 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\approver\ApproverController;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->check()) {
+        return redirect()->route('admin');
+    }
+    else {
+        return view('auth.login');
+    }
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::middleware(['admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+    Route::post('/admin', [AdminController::class, 'store'])->name('admin.store');
+});
+
+Route::middleware(['approver'])->group(function() {
+    Route::get('/approver', [ApproverController::class, 'index'])->name('approver');
+});
