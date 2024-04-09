@@ -11,15 +11,23 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    use HasFactory;
+
+    protected $connection = 'sqlsrv';
+
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'fname',
+        'lname',
         'email',
-        'password',
+        'role_id',
+        'department_id'
     ];
 
     /**
