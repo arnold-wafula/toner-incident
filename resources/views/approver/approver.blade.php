@@ -2,56 +2,53 @@
 @include('layouts.nav-approver')
 
 @section('content')
-<div class="container-fluid">
-    {{-- <form method="POST" action="" class="col-md-6 mx-auto bg-white p-4 rounded">
-        @csrf
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <label for="fname">First Name</label>
-                <input type="text" name="fname" class="form-control" placeholder="john"/>
-            </div>
-
-             <div class="col-md-4">
-                <label for="lname">Last Name</label>
-                <input type="text" name="lname" class="form-control" placeholder="doe"/>
-            </div>
-
-            <div class="col-md-4">
-                <label for="email">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="john.doe@groupmfi.com"/>
-            </div>
-        </div>
-
-        <div class="row mt-4">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <div class="container-fluid">
+        <div class="row">
             <div class="col-md-6">
-                <label for="role_id">Role</label>
-                <select name="role_id" class="form-control">
-                    
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="department_id">Role</label>
-                <select name="department_id" class="form-control">
-                    
-                </select>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <label for="password">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="*******">
+                {{-- <p class="mt-0">Department: {{ Auth::user()->department->department_name }}</p> --}}
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-6 order-md-2">
-                <button type="submit" class="btn btn-primary btn-block">Reject</button>
-            </div>
-            <div class="col-md-6 order-md-1">
-                <button type="submit" class="btn btn-primary btn-block">Approve</button>
-            </div>
+        <div class="container-fluid mt-4">
+            <table id="myTable" class="table table-striped table-dark">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Incident</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @foreach($incidents as $incident)
+                    <tr>
+                        <td>{{ $incident->idIncidents }}</td>
+                        <td>{{ $incident->cOurRef }}</td>
+                        <td>{{ $incident->cOutline }}</td>
+                        <td>Completed</td>
+                        <td>
+                            <button type="button" id="viewApprovalButton" class="btn btn-xs btn-primary" data-bs-toggle="modal" data-bs-target="#viewApproval">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                    @include('layouts.checkapprovals')
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </form> --}}
-</div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#myTable').DataTable({
+                    "scrollY": "287px",
+                    "scrollCollapse": true,
+                    "paging": false
+                });
+            });
+        </script>
 @endsection
