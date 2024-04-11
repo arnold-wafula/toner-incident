@@ -23,4 +23,7 @@ Route::middleware(['admin'])->group(function () {
 
 Route::middleware(['approver'])->group(function() {
     Route::get('/approver', [ApproverController::class, 'index'])->name('approver');
+
+    Route::post('/approve/{idIncidents}', [ApproverController::class, 'approve'])->name('approve');
+    Route::post('/reject/{idIncidents}', [ApproverController::class, 'reject'])->name('reject');
 });
