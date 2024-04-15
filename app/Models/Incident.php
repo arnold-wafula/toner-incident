@@ -69,4 +69,12 @@ class Incident extends Model
         'iPmtRecId',
         'iJrBatchId',
     ];
+
+    public function status() {
+        return $this->belongsTo(IncidentStatus::class, 'iIncidentStatusID', 'idIncidentStatus');
+    }
+
+    public function client() {
+        return $this->belongsTo(Client::class, 'iDebtorID', 'DCLink');
+    }
 }
