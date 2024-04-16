@@ -32,6 +32,7 @@
                     <th>Date</th>
                     <th>Date Modified</th>
                     <th>Account Code</th>
+                    <th>OrderNum</th>
                     <th>Customer</th>
                     <th>Incident No.</th>
                     <th>Status</th>
@@ -44,11 +45,16 @@
                     <td>{{ $incident->dCreated }}</td>
                     <td>{{ $incident->dLastModified }}</td>
                     <td>x</td>
+                    <td>{{ $incident->OrderNum }}</td>
                     <td>{{ $incident->ClientName }}</td>
                     <td>{{ $incident->cOurRef }}</td>
                     <td>{{ $incident->Status }}</td>
                     <td>
-                        <button type="button" id="salesOrderButton{{ $incident->idIncidents }}" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#salesOrderModal{{ $incident->idIncidents }}" data-incident_id="{{ $incident->idIncidents }}">
+                        <button type="button"
+                            class="btn btn-success btn-sm salesOrderButton" 
+                            data-incident_id="{{ $incident->idIncidents }}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#salesOrderModal{{ $incident->idIncidents }}">
                             View
                         </button>
                     </td>
@@ -68,23 +74,19 @@
             "scrollCollapse": true,
             "paging": false
         });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $('#salesOrderButton{{ $incident->idIncidents }}').on('click', function (e) {
+
+        $('.salesOrderButton').on('click', function (e) {
             e.preventDefault();
 
-            //let  = $(this).attr('incident_id');
-
-            var incidentId = $("input[name=incident_id]").val();
-            var url = "{{ route('salesorder', ":idIncidents") }}"
+            //var url = "{{ route('salesorder', ':idIncidents') }}";
+            var incidentId = $(this).data('incident_id');
 
             $.ajax({
-                url: url,
+                url: "{{ route('salesorder', 'incidentId') }}",
                 type: "GET",
+                data: { incident_id: incidentId },
                 success: function(data) {
-                    console.log("Success " + data);
+                    console.log(data);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
