@@ -9,6 +9,10 @@ class UserRole extends Model
 {
     use HasFactory;
 
+    protected $connection = 'sqlsrv-ds';
+
+    protected $table = 'user_roles';
+
     protected $fillable = [
         'role_name'
     ];
