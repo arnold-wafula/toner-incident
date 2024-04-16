@@ -13,7 +13,7 @@ class User extends Authenticatable
 
     use HasFactory;
 
-    protected $connection = 'sqlsrv';
+    protected $connection = 'sqlsrv-ds';
 
     protected $table = 'users';
 
