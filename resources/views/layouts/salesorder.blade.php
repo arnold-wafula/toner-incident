@@ -83,7 +83,7 @@
                         <div class="row mt-4">
                             <div class="col-md-4">
                                 <label for="serialno">Serial No</label>
-                                <input type="text" class="form-control" name="seriano" value="" disabled/>
+                                <input type="text" class="form-control" name="serialno" value="" disabled/>
                                
                             </div>
                             <div class="col-md-8">
