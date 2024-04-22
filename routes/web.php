@@ -30,5 +30,7 @@ Route::middleware(['approver'])->group(function() {
     Route::post('/approve', [ApproverController::class, 'approve'])->name('approve');
     Route::post('/reject', [ApproverController::class, 'reject'])->name('reject');
 
-    Route::get('/salesorder/{idIncidents}', [ApproverController::class, 'salesOrder'])->name('salesorder');
+    Route::post('/salesorder', [ApproverController::class, 'salesOrder'])->name('salesorder');
+
+    Route::get('/download/{filename}', [ApproverController::class, 'download'])->name('download');
 });
