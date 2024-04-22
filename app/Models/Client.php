@@ -125,5 +125,9 @@ class Client extends Model
         'bStatEmailPeople',
         'bSourceDocEmailPeople',
         'iTaxCountryID',
-    ];    
+    ];
+
+    public function invoicelines() {
+        return $this->hasMany(InvoiceLine::class, 'DCLink', 'iStockCodeID');
+    }
 }
