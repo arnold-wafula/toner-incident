@@ -30,6 +30,12 @@ return [
 
     'disks' => [
 
+        'network' => [
+            'driver' => 'smb',
+            'host' => '192.168.180.126',
+            'share' => 'EvoBICMetaData',
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
