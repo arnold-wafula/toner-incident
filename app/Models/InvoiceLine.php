@@ -194,5 +194,9 @@ class InvoiceLine extends Model
         'iCancellationReasonID',
         'iSelectedBarcodeID',
         'ucIDPOrdTxCMMIPONo',
-    ];    
+    ];
+
+    public function client() {
+        return $this->belongsTo(Client::class, 'iStockCodeID', 'DCLink');
+    }
 }
