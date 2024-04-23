@@ -6,6 +6,7 @@
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                 </button>
             </div>
+            <div class="flash-message" style="display: none;"></div>
             <div>
                 <div class="modal-body">
                     <div class="container-fluid mb-5 mt-3">
@@ -48,7 +49,7 @@
                             <a type="button" class="btn btn-danger btn-sm mr-4" id="reject">Reject</a>
                         </div>
                         <div class="col-md-2">
-                            <a type="button" class="btn btn-success btn-sm ml-4 approve-btn" data-id="{{ $incident->IncidentID }}">Approve</a>
+                            <a type="button" class="btn btn-success btn-sm ml-4 approve-btn" data-id="{{ $incident->incidentId }}">Approve</a>
                         </div>
                     </div>
                 </div>
