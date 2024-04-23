@@ -33,4 +33,6 @@ Route::middleware(['approver'])->group(function() {
     Route::post('/salesorder', [ApproverController::class, 'salesOrder'])->name('salesorder');
 
     Route::get('/download/{filename}', [ApproverController::class, 'download'])->name('download');
+
+    Route::get('/approved', [ApproverController::class, 'approved'])->name('approved');
 });
