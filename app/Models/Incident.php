@@ -70,6 +70,8 @@ class Incident extends Model
         'iJrBatchId',
     ];
 
+    public $timestamps = false;
+
     public function status() {
         return $this->belongsTo(IncidentStatus::class, 'iIncidentStatusID', 'idIncidentStatus');
     }
@@ -77,4 +79,8 @@ class Incident extends Model
     public function client() {
         return $this->belongsTo(Client::class, 'iDebtorID', 'DCLink');
     }
+
+    // public function invNum() {
+    //     return $this->belongsTo(InvNum::class, 'iCurrentAgentID', 'iINVNUMAgentID');
+    // }
 }
