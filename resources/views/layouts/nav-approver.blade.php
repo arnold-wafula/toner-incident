@@ -11,13 +11,13 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: black;"><strong>Incidents</strong></a>
+                    <a class="nav-link" href="{{ route('approver') }}" style="color: black;"><strong>Incidents</strong></a>
                 </li>
                 {{-- <li class="nav-item">
                     <a class="nav-link" href="#" style="color: black;"><strong>Pending</strong></a>
                 </li> --}}
                 <li class="nav-item">
-                    <a class="nav-link" href="#" style="color: black;"><strong>Approved</strong></a>
+                    <a class="nav-link" href="{{ route('approved') }}" style="color: black;"><strong>Approved</strong></a>
                 </li>
             </ul>
 
