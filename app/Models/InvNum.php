@@ -193,5 +193,9 @@ class InvNum extends Model
         'cDSMExtOrderNum',
         'cHash',
         'cRevenueIntegration',
-    ];   
+    ];
+
+    public function incident() {
+        return $this->hasOne(Incident::class, 'idIncidents', 'iINVNUMAgentID');
+    }
 }
