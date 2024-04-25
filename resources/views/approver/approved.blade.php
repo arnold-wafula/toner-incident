@@ -41,15 +41,15 @@
                 </tr>
             </thead>
             <tbody id="approvedTableBody">
-                @foreach($incidents as $incident)
+                @foreach($approvedIncidents as $aIncident)
                 <tr>
-                    <td>{{ $incident->dCreated }}</td>
-                    <td>{{ $incident->dLastModified }}</td>
-                    <td>{{ $incident->AccountCode }}</td>
-                    <td>{{ $incident->OrderNum }}</td>
-                    <td>{{ $incident->ClientName }}</td>
-                    <td>{{ $incident->cOurRef }}</td>
-                    <td>{{ $incident->Status }}</td>
+                    <td>{{ $aIncident->dCreated }}</td>
+                    <td>{{ $aIncident->dLastModified }}</td>
+                    <td>{{ $aIncident->AccountCode }}</td>
+                    <td>{{ $aIncident->OrderNum }}</td>
+                    <td>{{ $aIncident->ClientName }}</td>
+                    <td>{{ $aIncident->cOurRef }}</td>
+                    <td style="color: #008000">{{ $aIncident->Status }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -64,6 +64,7 @@
             "scrollY": "287px",
             "scrollCollapse": true,
             "paging": false,
+            "order" : [[0, 'DESC']],
             "columnDefs": [
                 { "className": "align-middle", "targets": "_all" }
             ]
