@@ -80,7 +80,7 @@ class Incident extends Model
         return $this->belongsTo(Client::class, 'iDebtorID', 'DCLink');
     }
 
-    // public function invNum() {
-    //     return $this->belongsTo(InvNum::class, 'iCurrentAgentID', 'iINVNUMAgentID');
-    // }
+    public function invNum() {
+        return $this->belongsTo(InvNum::class, 'iCurrentAgentID', 'iINVNUMAgentID');
+    }
 }
