@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100 text-center" id="salesOrderModalLabel{{ $incident->idIncidents }}">Confirm Details</h5>
+                <h5 class="modal-title w-100 text-center" id="salesOrderModalLabel{{ $incident->idIncidents }}">Confirm Sales Order Details</h5>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                 </button>
             </div>
@@ -46,7 +46,7 @@
                     <div class="row mt-4">
                         <div class="col-md-4"></div>
                         <div class="col-md-2">
-                            <a type="button" class="btn btn-danger btn-sm mr-4" id="reject">Reject</a>
+                            <a type="button" class="btn btn-danger btn-sm mr-4 reject-btn" data-id="{{ $incident->incidentId }}">Reject</a>
                         </div>
                         <div class="col-md-2">
                             <a type="button" class="btn btn-success btn-sm ml-4 approve-btn" data-id="{{ $incident->incidentId }}">Approve</a>
