@@ -81,6 +81,7 @@
             "scrollY": "287px",
             "scrollCollapse": true,
             "paging": false,
+            "order" : [[0, 'DESC']],
             "columnDefs": [
                 { "className": "align-middle", "targets": "_all" }
             ]
@@ -169,14 +170,46 @@
 </script>
 <script>
     $(document).ready(function() {
-        $('#reject').click(function() {
-            alert('Reject');
+        $('.reject-btn').click(function(e) {
+            e.preventDefault();
+
+            var incidentId = $(this).data("id");
+            var modalId = '#salesOrderModal' + incidentId;
+            console.log("Incident ID:", incidentId);
+
+            $.ajax({
+                url: "{{ route('reject') }}",
+                type: "POST",
+                dataType: "json",
+                data: { "incident_id": incidentId, "_token":"{{csrf_token()}}" },
+                success: function(data) {
+                    console.log("Success:", data);
+                    
+                    $('.flash-message').html('<div class="alert alert-success">Incident rejected successfully!</div>').show();
+                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    setTimeout(function() {
+                        $('.flash-message').fadeOut('slow');
+                        $(modalId).modal('hide');
+                    }, 3000);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+
+                    $('.flash-message').html('<div class="alert alert-success">Error rejecting incident. Please try again!</div>').show();
+                    $(modalId).animate({ scrollTop: 0 }, 'fast'); // Scroll to top of modal
+                    setTimeout(function() { 
+                        $('.flash-message').fadeOut('slow');
+                        $(modalId).modal('hide');
+                    }, 3000);
+                }
+            });
         });
 
         $('.approve-btn').click(function(e) {
             e.preventDefault();
 
             var incidentId = $(this).data("id");
+            var modalId = '#salesOrderModal' + incidentId;
             console.log("Incident ID:", incidentId);
 
             $.ajax({
@@ -188,12 +221,11 @@
                     console.log("Success:", data);
                     
                     $('.flash-message').html('<div class="alert alert-success">Incident approved successfully!</div>').show();
-                    $('#salesOrderModal{{ $incident->idIncidents }}').animate({ scrollTop: 0 }, 'fast');
+                    $(modalId).animate({ scrollTop: 0 }, 'fast');
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
+                        $(modalId).modal('hide');
                     }, 3000);
-                    
-                    $('#salesOrderModal{{ $incident->idIncidents }}').modal('hide');
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -201,9 +233,9 @@
                     $('.flash-message').html('<div class="alert alert-success">Error approving incident. Please try again!</div>').show();
                     $('#salesOrderModal{{ $incident->idIncidents }}').animate({ scrollTop: 0 }, 'fast'); // Scroll to top of modal
                     setTimeout(function() {
-                        $('.flash-message').fadeOut('slow'); // Hide flash message after 3 seconds
-                    }, 3000); // 3000 milliseconds (3 seconds)
-                    $('#salesOrderModal{{ $incident->idIncidents }}').modal('hide');
+                        $('.flash-message').fadeOut('slow');
+                        $(modalId).modal('hide');
+                    }, 3000);
                 }
             });
         });
