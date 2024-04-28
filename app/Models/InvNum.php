@@ -196,6 +196,6 @@ class InvNum extends Model
     ];
 
     public function incident() {
-        return $this->hasOne(Incident::class, 'idIncidents', 'iINVNUMAgentID');
+        return $this->hasOne(Incident::class, 'iINVNUMAgentID', 'iCurrentAgentID');
     }
 }
