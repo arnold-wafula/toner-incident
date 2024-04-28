@@ -76,9 +76,9 @@ class Incident extends Model
         return $this->belongsTo(IncidentStatus::class, 'iIncidentStatusID', 'idIncidentStatus');
     }
 
-    public function client() {
-        return $this->belongsTo(Client::class, 'iDebtorID', 'DCLink');
-    }
+    // public function client() {
+    //     return $this->belongsTo(Client::class, 'iDebtorID', 'DCLink');
+    // }
 
     public function invNum() {
         return $this->belongsTo(InvNum::class, 'iCurrentAgentID', 'iINVNUMAgentID');
