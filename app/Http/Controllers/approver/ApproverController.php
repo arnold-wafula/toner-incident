@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\approver;
 
+use finfo;
 use App\Models\Incident;
 use App\Models\InvoiceLine;
-use App\Models\InvNum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use finfo;
 
 class ApproverController extends Controller
 {
     // Displays the incident details on the Data table
     public function index() {
+
         $incidents = Incident::select(
             '_rtblIncidents.idIncidents as incidentId',
             '_rtblIncidents.dCreated',
@@ -21,22 +22,26 @@ class ApproverController extends Controller
             'OrderNum',
             'Client.Name as ClientName',
             '_rtblIncidents.cOurRef',
-            '_rtblDocStore.cDocStoreName as Document',
-            '_rtblIncidentStatus.cDescription as Status',
-        )
-        ->join('Client', '_rtblIncidents.iDebtorID', '=', 'Client.DCLink')
-        ->join('_rtblIncidentStatus', '_rtblIncidents.iIncidentStatusID', '=', '_rtblIncidentStatus.idIncidentStatus')
+            '_rtblDocStore.cDocStoreName as Document', //added
+            '_rtblIncidentStatus.cDescription as Status'
+        ) 
         ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
         ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
-        ->join('_rtblDocLinks', '_rtblIncidents.idIncidents', '=', '_rtblDocLinks.iLinkID')
-        ->join('_rtblDocStore', '_rtblDocLinks.iDocStoreID', '=', '_rtblDocStore.idDocStore')
+
+        ->leftjoin('_rtblDocLinks', '_rtblIncidents.idIncidents', '=', '_rtblDocLinks.iLinkID')
+        ->leftjoin('_rtblDocStore', '_rtblDocLinks.iDocStoreID', '=', '_rtblDocStore.idDocStore')
+        
+        ->join('Client', '_rtblIncidents.iDebtorID', '=', 'Client.DCLink')
+        ->join('_rtblIncidentStatus', '_rtblIncidents.iIncidentStatusID', '=', '_rtblIncidentStatus.idIncidentStatus')
+        
         ->where('_rtblIncidents.iIncidentTypeID', '38') // TONER INCIDENTS ONLY
         ->where('_rtblIncidents.iCurrentAgentID', '183') // SHILPA'S AGENT ID
         ->where('_rtblIncidents.iWorkflowStatusID', '82') // BIL-APP
-        ->whereIn('_rtblIncidentStatus.idIncidentStatus', [1]) // NOT STARTED
+
+        ->where('_rtblIncidentStatus.idIncidentStatus', [1]) // NOT STARTED
+        
         ->orderByDesc('_rtblIncidents.dCreated') // MOST RECENT DATE CREATED
-        ->distinct()
-        ->limit(20)
+        ->limit(10)
         ->get();
 
         return view('approver/approver', compact('incidents'));
@@ -47,7 +52,6 @@ class ApproverController extends Controller
             '_rtblIncidents.cOurRef',
             '_rtblIncidents.cOutline',
             'InvNum.OrderNum',
-            //'_btblInvoiceLines.fQuantity as Quantity',
             '_btblInvoiceLines.ucIDSOrdTxCMServiceAsset as SerialNumber',
             '_btblInvoiceLines.uiIDSOrdTxCMCurrReading as MonoCMR',
             '_btblInvoiceLines.uiIDSOrdTxCMPrevReading as MonoPMR',
@@ -57,15 +61,15 @@ class ApproverController extends Controller
             'StkItem.Description_1 as ItemDescription',
             'Client.Name as ClientName',
             '_rtblIncidents.dCreated',
-            //'_rtblIncidents.idIncidents as IncidentId'
-            //'_btblInvoiceLines.cLineNotes as LineNotes'
         )
         ->join('InvNum', 'InvNum.AutoIndex', '=', '_btblInvoiceLines.iInvoiceID')
         ->join('StkItem', 'StkItem.StockLink', '=', '_btblInvoiceLines.iStockCodeID')
         ->join('_etblIncidentSourceDocLinks', '_etblIncidentSourceDocLinks.iSourceDocID', '=', 'InvNum.AutoIndex')
         ->join('_rtblIncidents', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
+        
         ->join('Client', '_rtblIncidents.iDebtorID', '=', 'Client.DCLink')
         ->join('_rtblIncidentStatus', '_rtblIncidents.iIncidentStatusID', '=', '_rtblIncidentStatus.idIncidentStatus')
+        
         ->where('InvNum.OrderNum', $request->orderNumber)
         ->get();
 
@@ -132,25 +136,33 @@ class ApproverController extends Controller
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
 
-        if (!$incident) {
-            return response()->json(['error' => 'incident not found'], 404);
-        } else {
-            // Get the new agent ID from InvNum based on the current agent ID
-            $agentId = InvNum::where('iINVNUMAgentID', $incident->iCurrentAgentID)->value('iINVNUMAgentID');
-            //dd($agentId);
+        //$orderNumber = $request->order_number;
 
-            // Update the WorkflowStatusID to 11
-            $incident->iWorkflowStatusID = 11;
+        dd($incidentId);
+        
+        //dd($orderNumber);
 
-            // Change the status to In Progress (2)
-            $incident->iIncidentStatusID = 2;
+        $agentId = DB::table('_rtblIncidents')
+            ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
+            ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
+            ->where('idIncidents','=',$incident->incidentId)
+            ->select('iINVNUMAgentID')
+            ->first();
 
-            // Assign back the incident to the agentId
-            $incident->iCurrentAgentID = $agentId;
-            //dd($incident->iCurrentAgentID);
+        //dd($agentId);
 
-            $incident->save();
-        }
+        // Update the WorkflowStatusID to 11
+        $incident->iWorkflowStatusID = 11;
+
+        // Change the status to In Progress (2)
+        $incident->iIncidentStatusID = 2;
+
+        // Assign back the incident to the agentId
+        $incident->iCurrentAgentID = $agentId->iINVNUMAgentID;
+
+        //dd($incident->iCurrentAgentID);
+
+        $incident->save();
 
         return response()->json(['message' => 'Incident approved successfully', 'incident' => $incident]);
     }
@@ -161,25 +173,25 @@ class ApproverController extends Controller
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
 
-        if (!$incident) {
-            return response()->json(['error' => 'incident not found'], 404);
-        } else {
-            // Get the new agent ID based on the current agent ID
-            $agentId = InvNum::where('iINVNUMAgentID', $incident->iCurrentAgentID)->value('iINVNUMAgentID');
-            //dd($agentId);
+        //$orderNumber = $request->order_number;
 
-            // Update the WorkflowStatusID to ?
-            //$incident->iWorkflowStatusID = 0;
+        dd($incidentId);
 
-            // Change the status to In Progress (2)
-            //$incident->iIncidentStatusID = 2;
+        $agentId = DB::table('_rtblIncidents')
+            ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
+            ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
+            ->where('idIncidents','=',$incident->idIncidents)
+            ->select('iINVNUMAgentID')
+            ->first();
 
-            // Assign back the incident to the agentId
-            $incident->iCurrentAgentID = $agentId;
-            //dd($incident->iCurrentAgentID);
+        //dd($agentId);
 
-            $incident->save();
-        }
+        // Assign back the incident to the agentId
+        $incident->iCurrentAgentID = $agentId->iINVNUMAgentID;
+
+        //dd($incident->iCurrentAgentID);
+
+        $incident->save();
 
         return response()->json(['message' => 'Incident rejected successfully', 'incident' => $incident]);
     }
@@ -203,12 +215,11 @@ class ApproverController extends Controller
         ->join('_rtblDocLinks', '_rtblIncidents.idIncidents', '=', '_rtblDocLinks.iLinkID')
         ->join('_rtblDocStore', '_rtblDocLinks.iDocStoreID', '=', '_rtblDocStore.idDocStore')
         ->where('_rtblIncidents.iIncidentTypeID', '38')
-        // INCLUDE AGENT THAT CREATED THE SALESORDER
-        ->whereIn('_rtblIncidentStatus.idIncidentStatus', [2]) // IN PROGRESS
-        ->where('_rtblIncidents.iWorkflowStatusID', '11') // DELIVERY
+        ->where('_rtblIncidentStatus.idIncidentStatus', [2])
+        ->where('_rtblIncidents.iWorkflowStatusID', '11')
         ->orderByDesc('_rtblIncidents.dCreated')
         ->distinct()
-        ->limit(20)
+        ->limit(10)
         ->get();
 
         return view('approver/approved', compact('approvedIncidents'));
