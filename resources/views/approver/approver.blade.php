@@ -31,6 +31,7 @@
         <table id="incidentTable" class="table table-striped table-light">
             <thead>
                 <tr>
+                    <th>Id</th>
                     <th>Date Created</th>
                     <th>Date Modified</th>
                     <th>Account Code</th>
@@ -45,6 +46,7 @@
             <tbody id="incidentTableBody">
                 @foreach($incidents as $incident)
                 <tr>
+                    <td>{{ $incident->incidentId }}</td>
                     <td>{{ $incident->dCreated }}</td>
                     <td>{{ $incident->dLastModified }}</td>
                     <td>{{ $incident->AccountCode }}</td>
@@ -53,7 +55,9 @@
                     <td>{{ $incident->cOurRef }}</td>
                     <td>{{ $incident->Status }}</td>
                     <td>
-                        <a href="{{ route('download', $incident->Document) }}" class="btn btn-primary btn-sm">
+                        <a 
+                            href="{{ route('download', $incident->Document ?? '') }}" 
+                            class="btn btn-primary btn-sm">
                             <i class="fas fa-download"></i>
                         </a>
                     </td>
@@ -175,6 +179,7 @@
 
             var incidentId = $(this).data("id");
             var modalId = '#salesOrderModal' + incidentId;
+
             console.log("Incident ID:", incidentId);
 
             $.ajax({
@@ -195,8 +200,9 @@
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
 
-                    $('.flash-message').html('<div class="alert alert-success">Error rejecting incident. Please try again!</div>').show();
-                    $(modalId).animate({ scrollTop: 0 }, 'fast'); // Scroll to top of modal
+                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    
                     setTimeout(function() { 
                         $('.flash-message').fadeOut('slow');
                         $(modalId).modal('hide');
@@ -210,6 +216,7 @@
 
             var incidentId = $(this).data("id");
             var modalId = '#salesOrderModal' + incidentId;
+
             console.log("Incident ID:", incidentId);
 
             $.ajax({
@@ -222,6 +229,7 @@
                     
                     $('.flash-message').html('<div class="alert alert-success">Incident approved successfully!</div>').show();
                     $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
                         $(modalId).modal('hide');
@@ -230,8 +238,9 @@
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
 
-                    $('.flash-message').html('<div class="alert alert-success">Error approving incident. Please try again!</div>').show();
-                    $('#salesOrderModal{{ $incident->idIncidents }}').animate({ scrollTop: 0 }, 'fast'); // Scroll to top of modal
+                    $('.flash-message').html('<div class="alert alert-danger">Error approving incident</div>').show();
+                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
                         $(modalId).modal('hide');
