@@ -31,10 +31,10 @@
         <table id="incidentTable" class="table table-striped table-light">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>ID</th>
                     <th>Date Created</th>
                     <th>Date Modified</th>
-                    <th>Account Code</th>
+                    <th>Code</th>
                     <th>OrderNum</th>
                     <th>Customer</th>
                     <th>Incident</th> 
@@ -46,7 +46,7 @@
             <tbody id="incidentTableBody">
                 @foreach($incidents as $incident)
                 <tr>
-                    <td>{{ $incident->incidentId }}</td>
+                    <td>{{ $incident->idIncidents }}</td>
                     <td>{{ $incident->dCreated }}</td>
                     <td>{{ $incident->dLastModified }}</td>
                     <td>{{ $incident->AccountCode }}</td>
@@ -87,17 +87,33 @@
             "paging": false,
             "order" : [[0, 'DESC']],
             "columnDefs": [
-                { "className": "align-middle", "targets": "_all" }
+                { 
+                    "className": "align-middle", 
+                    "targets": "_all",
+                    "render": function (data, type, row, meta) {
+                        if (meta.col == 1 || meta.col == 2) {
+                            var dateObj = new Date(data);
+                            var formattedDate = dateObj.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                            return formattedDate;
+                        }
+                    
+                        return data;
+                    }
+                }
             ]
         });
     });
 </script>
 <script>
-    $('.salesOrderButton').click(function () {
-        var orderNumber = $(this).data("id");
+    $(document).ready(function() {
+        $('.salesOrderButton').click(function (e) {
+            e.preventDefault();
+
+            var orderNumber = $(this).val("id");
+            //console.log('Order Number:', orderNumber);
                       
-        $.ajax({
-            url: "{{ route('salesorder')}}",
+            $.ajax({
+                url: "{{ route('salesorder')}}",
                 type: "POST",
                 dataType:'json',
                 data: { "orderNumber": orderNumber, "_token":"{{csrf_token()}}" },
@@ -107,7 +123,17 @@
                     $('#cname').text(data[0].ClientName);
                     $('#ordernum').text(data[0].OrderNum);
                     $('#serialno').text(data[0].SerialNumber);
-                    $('#date').text(data[0].dCreated);
+
+                    var date = new Date(data[0].dCreated);
+                    var formattedDate = date.toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    $('#date').text(formattedDate);
 
                     // Loop through data and populate table rows
                     $('#orderTableBody').empty();
@@ -149,31 +175,7 @@
                 }
             });
         });
-</script>
-<script>
-    function calcMonoDiff(monocmr, monopmr) {
-        var monoDiff = 0;
 
-        if (!isNaN(monocmr) && !isNaN(monopmr)) { var monoDiff = monocmr - monopmr; }
-
-        return monoDiff;
-    }
-
-    function calcColorDiff(colocmr, colopmr) {
-        var coloDiff = 0;
-
-        if (!isNaN(colocmr) && !isNaN(colopmr)) { var coloDiff = colocmr - colopmr; }
-
-        return coloDiff;
-    }
-
-    function calcConsumption(monoDiff, yield) {
-        var consumption = ((monoDiff / yield) * 100).toFixed(2) + "%"; // Fixed the syntax error here
-        return consumption;
-    }
-</script>
-<script>
-    $(document).ready(function() {
         $('.reject-btn').click(function(e) {
             e.preventDefault();
 
@@ -196,6 +198,8 @@
                         $('.flash-message').fadeOut('slow');
                         $(modalId).modal('hide');
                     }, 3000);
+
+                    $('#incidentTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -234,6 +238,8 @@
                         $('.flash-message').fadeOut('slow');
                         $(modalId).modal('hide');
                     }, 3000);
+
+                    $('#incidentTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -249,5 +255,27 @@
             });
         });
     });
+</script>
+<script>
+    function calcMonoDiff(monocmr, monopmr) {
+        var monoDiff = 0;
+
+        if (!isNaN(monocmr) && !isNaN(monopmr)) { var monoDiff = monocmr - monopmr; }
+
+        return monoDiff;
+    }
+
+    function calcColorDiff(colocmr, colopmr) {
+        var coloDiff = 0;
+
+        if (!isNaN(colocmr) && !isNaN(colopmr)) { var coloDiff = colocmr - colopmr; }
+
+        return coloDiff;
+    }
+
+    function calcConsumption(monoDiff, yield) {
+        var consumption = ((monoDiff / yield) * 100).toFixed(2) + "%"; // Fixed the syntax error here
+        return consumption;
+    }
 </script>
 @endsection
