@@ -46,10 +46,10 @@
                     <div class="row mt-4">
                         <div class="col-md-4"></div>
                         <div class="col-md-2">
-                            <a type="button" class="btn btn-danger btn-sm mr-4 reject-btn" data-id="{{ $incident->incidentId }}">Reject</a>
+                            <a type="button" class="btn btn-danger btn-sm mr-4 reject-btn" data-id="{{ $incident->idIncidents }}">Reject</a>
                         </div>
                         <div class="col-md-2">
-                            <a type="button" class="btn btn-success btn-sm ml-4 approve-btn" data-id="{{ $incident->incidentId }}">Approve</a>
+                            <a type="button" class="btn btn-success btn-sm ml-4 approve-btn" data-id="{{ $incident->idIncidents }}">Approve</a>
                         </div>
                     </div>
                 </div>
