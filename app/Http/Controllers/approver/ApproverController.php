@@ -15,7 +15,7 @@ class ApproverController extends Controller
     public function index() {
 
         $incidents = Incident::select(
-            '_rtblIncidents.idIncidents as incidentId',
+            '_rtblIncidents.idIncidents', //'_rtblIncidents.idIncidents as incidentId',
             '_rtblIncidents.dCreated',
             '_rtblIncidents.dLastModified',
             'Client.Account as AccountCode',
@@ -145,7 +145,7 @@ class ApproverController extends Controller
         $agentId = DB::table('_rtblIncidents')
             ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
             ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
-            ->where('idIncidents','=',$incident->incidentId)
+            ->where('idIncidents', '=', $incident->incidentId)
             ->select('iINVNUMAgentID')
             ->first();
 
@@ -169,11 +169,8 @@ class ApproverController extends Controller
 
     // Function called when the approver clicks the reject button
     public function reject(Request $request) {
-        // Incident ID from the request
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
-
-        //$orderNumber = $request->order_number;
 
         dd($incidentId);
 
