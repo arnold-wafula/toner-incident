@@ -162,7 +162,7 @@ class ApproverController extends Controller
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
 
-        //dd($incidentId);
+        dd($incidentId);
 
         $agentId = DB::table('_rtblIncidents')
             ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
