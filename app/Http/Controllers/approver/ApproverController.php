@@ -15,32 +15,28 @@ class ApproverController extends Controller
     public function index() {
 
         $incidents = Incident::select(
-            '_rtblIncidents.idIncidents', //'_rtblIncidents.idIncidents as incidentId',
+            '_rtblIncidents.idIncidents',
             '_rtblIncidents.dCreated',
             '_rtblIncidents.dLastModified',
             'Client.Account as AccountCode',
             'OrderNum',
             'Client.Name as ClientName',
             '_rtblIncidents.cOurRef',
-            '_rtblDocStore.cDocStoreName as Document', //added
+            '_rtblDocStore.cDocStoreName as Document',
             '_rtblIncidentStatus.cDescription as Status'
         ) 
         ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
         ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
-
         ->leftjoin('_rtblDocLinks', '_rtblIncidents.idIncidents', '=', '_rtblDocLinks.iLinkID')
         ->leftjoin('_rtblDocStore', '_rtblDocLinks.iDocStoreID', '=', '_rtblDocStore.idDocStore')
-        
         ->join('Client', '_rtblIncidents.iDebtorID', '=', 'Client.DCLink')
         ->join('_rtblIncidentStatus', '_rtblIncidents.iIncidentStatusID', '=', '_rtblIncidentStatus.idIncidentStatus')
-        
         ->where('_rtblIncidents.iIncidentTypeID', '38') // TONER INCIDENTS ONLY
         ->where('_rtblIncidents.iCurrentAgentID', '183') // SHILPA'S AGENT ID
         ->where('_rtblIncidents.iWorkflowStatusID', '82') // BIL-APP
-
         ->where('_rtblIncidentStatus.idIncidentStatus', [1]) // NOT STARTED
         
-        ->orderByDesc('_rtblIncidents.dCreated') // MOST RECENT DATE CREATED
+        //->orderByDesc('_rtblIncidents.dCreated') // MOST RECENT DATE CREATED
         ->limit(10)
         ->get();
 
@@ -66,10 +62,8 @@ class ApproverController extends Controller
         ->join('StkItem', 'StkItem.StockLink', '=', '_btblInvoiceLines.iStockCodeID')
         ->join('_etblIncidentSourceDocLinks', '_etblIncidentSourceDocLinks.iSourceDocID', '=', 'InvNum.AutoIndex')
         ->join('_rtblIncidents', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
-        
         ->join('Client', '_rtblIncidents.iDebtorID', '=', 'Client.DCLink')
         ->join('_rtblIncidentStatus', '_rtblIncidents.iIncidentStatusID', '=', '_rtblIncidentStatus.idIncidentStatus')
-        
         ->where('InvNum.OrderNum', $request->orderNumber)
         ->get();
 
@@ -136,16 +130,12 @@ class ApproverController extends Controller
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
 
-        //$orderNumber = $request->order_number;
-
-        dd($incidentId);
-        
-        //dd($orderNumber);
+        //dd($incidentId);
 
         $agentId = DB::table('_rtblIncidents')
             ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
             ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
-            ->where('idIncidents', '=', $incident->incidentId)
+            ->where('idIncidents', '=', $incident->idIncidents)
             ->select('iINVNUMAgentID')
             ->first();
 
@@ -172,12 +162,12 @@ class ApproverController extends Controller
         $incidentId = $request->incident_id;
         $incident = Incident::find($incidentId);
 
-        dd($incidentId);
+        //dd($incidentId);
 
         $agentId = DB::table('_rtblIncidents')
             ->join('_etblIncidentSourceDocLinks', '_rtblIncidents.idIncidents', '=', '_etblIncidentSourceDocLinks.iIncidentID')
             ->join('InvNum', 'InvNum.AutoIndex', '=', '_etblIncidentSourceDocLinks.iSourceDocID')
-            ->where('idIncidents','=',$incident->idIncidents)
+            ->where('idIncidents','=', $incident->idIncidents)
             ->select('iINVNUMAgentID')
             ->first();
 
