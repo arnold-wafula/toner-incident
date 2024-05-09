@@ -1,8 +1,8 @@
-<div class="modal fade" id="salesOrderModal{{ $incident->idIncidents }}" tabindex="-1" role="dialog" aria-labelledby="salesOrderModalLabel{{ $incident->idIncidents }}" aria-hidden="true">
+<div class="modal fade" id="salesOrderModal" tabindex="-1" role="dialog" aria-labelledby="salesOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100 text-center" id="salesOrderModalLabel{{ $incident->idIncidents }}">Confirm Sales Order Details</h5>
+                <h5 class="modal-title w-100 text-center" id="salesOrderModalLabel">Confirm Sales Order Details</h5>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                 </button>
             </div>
