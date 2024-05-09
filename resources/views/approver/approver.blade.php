@@ -62,13 +62,15 @@
                         </a>
                     </td>
                     <td>
-                        <a 
-                           class="btn btn-success btn-sm salesOrderButton" 
-                           data-id="{{ $incident->OrderNum }}"
-                           data-toggle="modal" 
-                           data-target="#salesOrderModal{{ $incident->idIncidents }}">
-                           View
-                        </a>
+                        <button 
+                            type="button"
+                            class="btn btn-success btn-sm salesOrderButton"
+                            data-id="{{ $incident->idIncidents }}"
+                            data-order="{{ $incident->OrderNum }}"
+                            data-toggle="modal"
+                            data-target="#salesOrderModal">
+                            View
+                        </button>
                         @include('layouts.salesordermodal')
                     </td>
                 </tr>
@@ -77,7 +79,7 @@
         </table>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -109,20 +111,33 @@
         $('.salesOrderButton').click(function (e) {
             e.preventDefault();
 
-            var orderNumber = $(this).val("id");
-            //console.log('Order Number:', orderNumber);
+            var incidentId = $(this).data("id");
+            var orderNumber = $(this).data("order");
+
+            //var orderNumber = $(this).data("id");
+            //var incidentId = $(this).closest('tr').find('td:first').text();
+            //console.log("Order Number:", orderNumber);
+
+            populateModalContent(incidentId, orderNumber);
+
+        });
                       
+        function populateModalContent(incidentId, orderNumber) {
+            // AJAX request to fetch sales order details based on incident ID
             $.ajax({
                 url: "{{ route('salesorder')}}",
                 type: "POST",
-                dataType:'json',
+                dataType: "json",
                 data: { "orderNumber": orderNumber, "_token":"{{csrf_token()}}" },
                 success: function(data) {
-                    console.log(data);
-
+                    // Update modal content with fetched data
+                    $('#salesOrderModal .modal-title').text('Confirm Sales Order Details for Incident ID: ' + incidentId);
                     $('#cname').text(data[0].ClientName);
                     $('#ordernum').text(data[0].OrderNum);
                     $('#serialno').text(data[0].SerialNumber);
+
+                    $('#salesOrderModal .approve-btn').data('id', incidentId);
+                    $('#salesOrderModal .reject-btn').data('id', incidentId);
 
                     var date = new Date(data[0].dCreated);
                     var formattedDate = date.toLocaleString('en-US', {
@@ -135,7 +150,7 @@
                     
                     $('#date').text(formattedDate);
 
-                    // Loop through data and populate table rows
+                    // Populate table rows
                     $('#orderTableBody').empty();
                     var count = 1;
                     if (data.length > 0) {
@@ -169,13 +184,20 @@
                             count++;
                         });
                     }
+
+
+                    // Show the modal after updating content
+                    $('#salesOrderModal').modal('show');
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
                 }
             });
-        });
-
+        }
+    });
+</script>
+<script>
+    $(document).ready(function() {
         $('.reject-btn').click(function(e) {
             e.preventDefault();
 
@@ -194,12 +216,10 @@
                     
                     $('.flash-message').html('<div class="alert alert-success">Incident rejected successfully!</div>').show();
                     $(modalId).animate({ scrollTop: 0 }, 'fast');
+
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
-                        $(modalId).modal('hide');
                     }, 3000);
-
-                    $('#incidentTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -209,8 +229,11 @@
                     
                     setTimeout(function() { 
                         $('.flash-message').fadeOut('slow');
-                        $(modalId).modal('hide');
                     }, 3000);
+                },
+                complete: function() {
+                    $(modalId).modal('hide');
+                    $('#incidentTable').ajax.reload();
                 }
             });
         });
@@ -236,10 +259,7 @@
                     
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
-                        $(modalId).modal('hide');
                     }, 3000);
-
-                    $('#incidentTable').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -249,8 +269,11 @@
                     
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow');
-                        $(modalId).modal('hide');
                     }, 3000);
+                },
+                complete: function() {
+                    $(modalId).modal('hide');
+                    $('#incidentTable').ajax.reload();
                 }
             });
         });
