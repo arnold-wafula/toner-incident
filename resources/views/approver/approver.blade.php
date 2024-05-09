@@ -62,7 +62,7 @@
                         </a>
                     </td>
                     <td>
-                        <button 
+                        <a
                             type="button"
                             class="btn btn-success btn-sm salesOrderButton"
                             data-id="{{ $incident->idIncidents }}"
@@ -70,7 +70,7 @@
                             data-toggle="modal"
                             data-target="#salesOrderModal">
                             View
-                        </button>
+                        </a>
                         @include('layouts.salesordermodal')
                     </td>
                 </tr>
@@ -114,38 +114,24 @@
             var incidentId = $(this).data("id");
             var orderNumber = $(this).data("order");
 
-            //var orderNumber = $(this).data("id");
-            //var incidentId = $(this).closest('tr').find('td:first').text();
-            //console.log("Order Number:", orderNumber);
-
-            populateModalContent(incidentId, orderNumber);
+            populateModal(incidentId, orderNumber);
 
         });
                       
-        function populateModalContent(incidentId, orderNumber) {
-            // AJAX request to fetch sales order details based on incident ID
+        function populateModal(incidentId, orderNumber) {
             $.ajax({
                 url: "{{ route('salesorder')}}",
                 type: "POST",
                 dataType: "json",
                 data: { "orderNumber": orderNumber, "_token":"{{csrf_token()}}" },
                 success: function(data) {
-                    // Update modal content with fetched data
-                    $('#salesOrderModal .modal-title').text('Confirm Sales Order Details for Incident ID: ' + incidentId);
                     $('#cname').text(data[0].ClientName);
                     $('#ordernum').text(data[0].OrderNum);
                     $('#serialno').text(data[0].SerialNumber);
 
-                    $('#salesOrderModal .approve-btn').data('id', incidentId);
-                    $('#salesOrderModal .reject-btn').data('id', incidentId);
-
                     var date = new Date(data[0].dCreated);
                     var formattedDate = date.toLocaleString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
                     });
                     
                     $('#date').text(formattedDate);
@@ -185,9 +171,8 @@
                         });
                     }
 
-
-                    // Show the modal after updating content
-                    $('#salesOrderModal').modal('show');
+                    $('#salesOrderModal .reject-btn').data('id', incidentId);
+                    $('#salesOrderModal .approve-btn').data('id', incidentId);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -214,27 +199,29 @@
                 success: function(data) {
                     console.log("Success:", data);
                     
-                    $('.flash-message').html('<div class="alert alert-success">Incident rejected successfully!</div>').show();
-                    $(modalId).animate({ scrollTop: 0 }, 'fast');
-
+                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
+                    
                     setTimeout(function() {
-                        $('.flash-message').fadeOut('slow');
+                        $('.flash-message').fadeOut('slow', function() {
+                            $(modalId).modal('hide');
+                            $('#incidentTable').DataTable().ajax.reload();
+                        });
                     }, 3000);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
 
                     $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
-                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
-                    setTimeout(function() { 
-                        $('.flash-message').fadeOut('slow');
+                    setTimeout(function() {
+                        $('.flash-message').fadeOut('slow', function() {
+                            $(modalId).modal('hide');
+                            $('#incidentTable').DataTable().ajax.reload();
+                        });
                     }, 3000);
                 },
-                complete: function() {
-                    $(modalId).modal('hide');
-                    $('#incidentTable').ajax.reload();
-                }
             });
         });
 
@@ -254,27 +241,29 @@
                 success: function(data) {
                     console.log("Success:", data);
                     
-                    $('.flash-message').html('<div class="alert alert-success">Incident approved successfully!</div>').show();
-                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
                     setTimeout(function() {
-                        $('.flash-message').fadeOut('slow');
+                        $('.flash-message').fadeOut('slow', function() {
+                            $(modalId).modal('hide');
+                            $('#incidentTable').DataTable().ajax.reload();
+                        });
                     }, 3000);
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
 
-                    $('.flash-message').html('<div class="alert alert-danger">Error approving incident</div>').show();
-                    $(modalId).animate({ scrollTop: 0 }, 'fast');
+                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
                     setTimeout(function() {
-                        $('.flash-message').fadeOut('slow');
+                        $('.flash-message').fadeOut('slow', function() {
+                            $(modalId).modal('hide');
+                            $('#incidentTable').DataTable().ajax.reload();
+                        });
                     }, 3000);
                 },
-                complete: function() {
-                    $(modalId).modal('hide');
-                    $('#incidentTable').ajax.reload();
-                }
             });
         });
     });
