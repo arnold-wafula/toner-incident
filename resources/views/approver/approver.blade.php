@@ -79,8 +79,8 @@
         </table>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+{{-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> --}}
+{{-- <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> --}}
 <script>
     $(document).ready(function () {
         $('#incidentTable').DataTable({
@@ -108,7 +108,7 @@
 </script>
 <script>
     $(document).ready(function() {
-        $('.salesOrderButton').click(function (e) {
+        $('.salesOrderButton').on('click', function (e) {
             e.preventDefault();
 
             var incidentId = $(this).data("id");
@@ -131,7 +131,11 @@
 
                     var date = new Date(data[0].dCreated);
                     var formattedDate = date.toLocaleString('en-US', {
-                        year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
                     
                     $('#date').text(formattedDate);
@@ -183,13 +187,14 @@
 </script>
 <script>
     $(document).ready(function() {
-        $('.reject-btn').click(function(e) {
+        $('.reject-btn').on('click', function(e) {
             e.preventDefault();
 
             var incidentId = $(this).data("id");
-            var modalId = '#salesOrderModal' + incidentId;
+            //var modalId = '#salesOrderModal' + incidentId;
 
             console.log("Incident ID:", incidentId);
+            //console.log("Modal ID:", modalId);
 
             $.ajax({
                 url: "{{ route('reject') }}",
@@ -199,14 +204,11 @@
                 success: function(data) {
                     console.log("Success:", data);
                     
-                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('.flash-message').html('<div class="alert alert-success">Incident rejected successfully!</div>').show();
                     $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
                     setTimeout(function() {
-                        $('.flash-message').fadeOut('slow', function() {
-                            $(modalId).modal('hide');
-                            $('#incidentTable').DataTable().ajax.reload();
-                        });
+                        $('.flash-message').fadeOut('slow');
                     }, 3000);
                 },
                 error: function(xhr, status, error) {
@@ -218,14 +220,21 @@
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow', function() {
                             $(modalId).modal('hide');
-                            $('#incidentTable').DataTable().ajax.reload();
+                            $('#incidentTable').ajax.reload(null, false); // Reload the table without resetting pagination
                         });
                     }, 3000);
+
+                    //$('#incidentTable').ajax.reload();
                 },
+            });
+
+            $('#salesOrderModal').on('hidden.bs.modal', function () {
+                // Clear the alert message when the modal is closed
+                $('.flash-message').html('');
             });
         });
 
-        $('.approve-btn').click(function(e) {
+        $('.approve-btn').on('click', function(e) {
             e.preventDefault();
 
             var incidentId = $(this).data("id");
@@ -241,7 +250,7 @@
                 success: function(data) {
                     console.log("Success:", data);
                     
-                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('.flash-message').html('<div class="alert alert-success">Incident approved successfully!</div>').show();
                     $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
                     setTimeout(function() {
@@ -254,12 +263,12 @@
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
 
-                    $('.flash-message').html('<div class="alert alert-danger">Error rejecting incident. Please try again!</div>').show();
+                    $('.flash-message').html('<div class="alert alert-danger">Error approving incident. Please try again!</div>').show();
                     $('#salesOrderModal').animate({ scrollTop: 0 }, 'fast');
                     
                     setTimeout(function() {
                         $('.flash-message').fadeOut('slow', function() {
-                            $(modalId).modal('hide');
+                            $('#salesOrderModal').modal('hide');
                             $('#incidentTable').DataTable().ajax.reload();
                         });
                     }, 3000);
